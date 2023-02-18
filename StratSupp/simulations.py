@@ -80,6 +80,7 @@ def simulate_recommendations_with_bidding(
         pos = K - (scipy.stats.rankdata(bids, method='ordinal') - 1)
         beta = promotion_factor * 2 * ((K - pos) / (K - 1) - 0.5)
         payment = np.zeros(K)
+
         # Recommend
         for user_id in online_users:
             # Predict ratings
@@ -117,6 +118,7 @@ def simulate_recommendations_with_bidding(
         # Retrain
         cf_model.fit(trainset_from_df(pd.concat(recommendation_results)))
         # Pay and record remaining budgets
+        total = payment.sum()
         for topic_k, agent in enumerate(suppliers):
             agent.transfer_funds(payment[topic_k])
             payment_results.append({
@@ -128,6 +130,8 @@ def simulate_recommendations_with_bidding(
                 'revenue': payment[topic_k],  # payment made to supplier k
                 'remaining_budget': agent.remaining_budget(),  # remaining budget
             })
+
+            agent.update_bidding_range(payment[topic_k], total)  # Update bidding range
 
     return (
         pd.concat(recommendation_results),  # recommendations_df

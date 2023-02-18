@@ -89,9 +89,9 @@ class StrategicBiddingAgent(BiddingAgent):
         self.upper_limit = 0.5
         self.lower_limit = 0.25
 
-    def update_bidding_range(self, num_of_sales, total_users):
+    def update_bidding_range(self, private_incomes, total_incomes):
         # update upper_limit
-        hostility = (total_users-num_of_sales) / num_of_sales
+        hostility = (total_incomes - private_incomes) / private_incomes
         self.upper_limit = 0.25 + 0.75*hostility
 
         # update lower_limit
