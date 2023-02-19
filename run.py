@@ -31,9 +31,10 @@ initial_budget = 100
 bidding_simulation_params = {
     'payment_per_step': 100,
     'promotion_factor': 3.0,
-    'num_steps': 100,
+    'num_steps': 300,
 }
-lookback_steps = 0.02 * bidding_simulation_params['num_steps']
+num_steps = bidding_simulation_params['num_steps']
+lookback_steps = int(0.02 * num_steps)
 
 n_strategic_agents = 0 #topics_params['n_topics']
 
@@ -64,6 +65,7 @@ if __name__ == '__main__':
     plot_df(payments_df)
 
     # measurements
-    stability_value = stability(recommendation_results_df, payments_df, lookback_steps)
-    heterogeneity_value = heterogeneity(recommendation_results_df, payments_df, lookback_steps)
+    timestamp = range(num_steps-lookback_steps, num_steps)
+    stability_value = stability(recommendation_results_df, payments_df, timestamp)
+    heterogeneity_value = heterogeneity(recommendation_results_df, payments_df, timestamp)
     print(stability_value, heterogeneity_value)
