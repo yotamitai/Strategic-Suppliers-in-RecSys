@@ -1,5 +1,4 @@
 import itertools
-
 import numpy as np
 import pandas as pd
 
@@ -189,6 +188,7 @@ class TopicsStatic:
             data=ratings,
             columns=('user_id', 'item_id', 'rating')
         ).assign(timestamp=self.t)
+
 
 class TopicsDynamic(TopicsStatic):
     def __init__(self, topic_change, *args, **kwargs):

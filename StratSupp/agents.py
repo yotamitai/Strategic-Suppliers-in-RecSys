@@ -79,9 +79,12 @@ class RandomFractionBiddingAgent(BiddingAgent):
     At each step, suppliers of this type bid a random amount of money
     between 0 and half the money they currently have.
     """
-    def calculate_bid(self, context=None):
-        return self.rng.uniform(low=0.0,high=0.5)*self.remaining_budget()
 
+    def calculate_bid(self, context=None):
+        return self.rng.uniform(low=0.0, high=0.5) * self.remaining_budget()
+
+    def update_bidding_range(self, private_incomes, total_incomes):
+        return None
 
 class StrategicBiddingAgent(BiddingAgent):
     def __init__(self, initial_budget, topic_k, random_state=None):
@@ -92,15 +95,16 @@ class StrategicBiddingAgent(BiddingAgent):
     def update_bidding_range(self, private_incomes, total_incomes):
         # update upper_limit
         hostility = (total_incomes - private_incomes) / private_incomes
-        self.upper_limit = 0.25 + 0.75*hostility
+        self.upper_limit = 0.25 + 0.75 * hostility
 
         # update lower_limit
-        if self._remaining_budget<self.initial_budget:
+        if self._remaining_budget < self.initial_budget:
             # low success
-            self.lower_limit = 0.25 * (1-hostility)
+            self.lower_limit = 0.25 * (1 - hostility)
         else:
             # high success
             self.lower_limit = 0.25
 
     def calculate_bid(self, context=None):
-        return self.rng.uniform(low=self.lower_limit,high=self.upper_limit)*self.remaining_budget()
+        return self.rng.uniform(low=self.lower_limit,
+                                high=self.upper_limit) * self.remaining_budget()
