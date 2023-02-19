@@ -31,11 +31,11 @@ initial_budget = 100
 bidding_simulation_params = {
     'payment_per_step': 100,
     'promotion_factor': 3.0,
-    'num_steps': 1000,
+    'num_steps': 100,
 }
 lookback_steps = 0.02 * bidding_simulation_params['num_steps']
 
-n_strategic_agents = topics_params['n_topics']
+n_strategic_agents = 0 #topics_params['n_topics']
 
 if __name__ == '__main__':
     # environment
