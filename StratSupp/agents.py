@@ -84,7 +84,7 @@ class RandomFractionBiddingAgent(BiddingAgent):
         return self.rng.uniform(low=0.0, high=0.5) * self.remaining_budget()
 
     def update_bidding_range(self, private_incomes, total_incomes):
-        return None
+        pass
 
 class StrategicBiddingAgent(BiddingAgent):
     def __init__(self, initial_budget, topic_k, random_state=None):

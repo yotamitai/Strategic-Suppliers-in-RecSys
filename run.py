@@ -3,6 +3,7 @@ import surprise
 
 from StratSupp.agents import StrategicBiddingAgent, RandomFractionBiddingAgent
 from StratSupp.environments import TopicsDynamic
+from StratSupp.measurements import stability, heterogeneity
 from StratSupp.plotting import plot_df
 from StratSupp.simulations import simulate_recommendations_with_bidding
 from StratSupp.suppliers import SuppliersGroup
@@ -30,10 +31,11 @@ initial_budget = 100
 bidding_simulation_params = {
     'payment_per_step': 100,
     'promotion_factor': 3.0,
-    'num_steps': 100,
+    'num_steps': 1000,
 }
+lookback_steps = 0.02 * bidding_simulation_params['num_steps']
 
-n_strategic_agents = 0#topics_params['n_topics']
+n_strategic_agents = topics_params['n_topics']
 
 if __name__ == '__main__':
     # environment
@@ -60,3 +62,8 @@ if __name__ == '__main__':
 
     # plot
     plot_df(payments_df)
+
+    # measurements
+    stability_value = stability(recommendation_results_df, payments_df, lookback_steps)
+    heterogeneity_value = heterogeneity(recommendation_results_df, payments_df, lookback_steps)
+    print(stability_value, heterogeneity_value)
