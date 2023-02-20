@@ -1,3 +1,4 @@
+import numpy as np
 import surprise
 
 
@@ -19,3 +20,11 @@ def trainset_from_df(df):
         reader=surprise.Reader(rating_scale=(1, 5)),
     )
     return dataset.build_full_trainset()
+
+
+def topic_histogram(lst, n_values):
+    int_lst = [int(x) for x in lst]
+    h = [0] * n_values
+    for item in int_lst:
+        h[item] += 1
+    return np.array(h)

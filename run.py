@@ -67,5 +67,8 @@ if __name__ == '__main__':
     # measurements
     timestamp = range(num_steps-lookback_steps, num_steps)
     stability_value = stability(recommendation_results_df, payments_df, timestamp)
-    heterogeneity_value = heterogeneity(recommendation_results_df, payments_df, timestamp)
-    print(stability_value, heterogeneity_value)
+    heterogeneity_value = heterogeneity(recommendation_results_df, payments_df, timestamp, verbose=True)
+
+    # printing
+    print(f'Stability score: {stability_value}\nHeterogeneity score: {heterogeneity_value}')
+    print(f'Measurements from the {lookback_steps} last timestamps')
