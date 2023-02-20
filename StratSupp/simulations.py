@@ -121,6 +121,8 @@ def simulate_recommendations_with_bidding(
         total = payment.sum()
         for topic_k, agent in enumerate(suppliers):
             agent.transfer_funds(payment[topic_k])
+            topic_hostility = agent.update_bidding_range(payment[topic_k], total)  # Update bidding range
+
             payment_results.append({
                 'timestamp': t + 1,
                 'supplier': topic_k,  # supplier id
@@ -129,9 +131,10 @@ def simulate_recommendations_with_bidding(
                 'boost': beta[topic_k],  # beta_t^k
                 'revenue': payment[topic_k],  # payment made to supplier k
                 'remaining_budget': agent.remaining_budget(),  # remaining budget
+                'hostility': topic_hostility,  # market hostility
             })
 
-            agent.update_bidding_range(payment[topic_k], total)  # Update bidding range
+
 
     return (
         pd.concat(recommendation_results),  # recommendations_df

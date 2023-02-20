@@ -84,7 +84,10 @@ class RandomFractionBiddingAgent(BiddingAgent):
         return self.rng.uniform(low=0.0, high=0.5) * self.remaining_budget()
 
     def update_bidding_range(self, private_incomes, total_incomes):
-        pass
+        hostility = (total_incomes - private_incomes) / total_incomes
+        return hostility
+
+
 
 class StrategicBiddingAgent(BiddingAgent):
     def __init__(self, initial_budget, topic_k, random_state=None):
@@ -104,6 +107,8 @@ class StrategicBiddingAgent(BiddingAgent):
         else:
             # high success
             self.lower_limit = 0.25
+
+        return hostility
 
     def calculate_bid(self, context=None):
         return self.rng.uniform(low=self.lower_limit,
