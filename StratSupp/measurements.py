@@ -3,24 +3,28 @@ import numpy as np
 from StratSupp.utils import topic_histogram
 
 
-def stability(df_rec, df_pay, lookback_timestamp):
+def heterogeneity(df_rec, df_pay, last_timestamp, n_topics=10):
     """
-    :param lookback_timestamp: (List) timestamps for which to measure stability
-    :return             value: (Float) between 0-1
+    :param last_timestamp: (int) the last timestamp
+    :return         value: (Float) between 0-1
     """
-    value = 0
+    df_last_timestamp = df_rec[df_rec["timestamp"] == last_timestamp]
+    hist = topic_histogram(df_last_timestamp['latent_topic'].values, n_topics)
+    market_shares = [round((x / df_last_timestamp.shape[0]), 3) for x in hist]
+    non_zero_topics = df_last_timestamp['latent_topic'].nunique()
 
-    for timestep in lookback_timestamp:
-        df_timestamp = df_rec[df_rec["timestamp"] == timestep]
+    # calculate heterogeneity
+    market_shares_heterogeneity = 0 #TODO
 
-    assert 0.0 <= value <= 1.0, 'Stability measurement not in range'
+    value = market_shares_heterogeneity
+    assert 0.0 <= value <= 1.0, 'Heterogeneity measurement not in range'
     return value
 
 
-def heterogeneity(df_rec, df_pay, lookback_timestamps, n_topics=10, verbose=False):
+def stability(df_rec, df_pay, lookback_timestamps, n_topics=10, verbose=False):
     """
-    :param lookback_timestamps: (List) timestamps for which to measure heterogeneity
-    :return             value: (Float) between 0-1
+    :param lookback_timestamps: (List) timestamps for which to measure stability
+    :return              value: (Float) between 0-1
     """
     counts, market_shares, diff_shares = [], [], []
     # unique, diff_unique, diff_counts = [], [], []
@@ -48,10 +52,10 @@ def heterogeneity(df_rec, df_pay, lookback_timestamps, n_topics=10, verbose=Fals
             print(f'\t{d}, Sum: {sum(d):.3}')
 
     # aggregation
-    market_shares_heterogeneity = np.average([sum(x) for x in diff_shares])
+    market_shares_stability = round(np.average([sum(x) for x in diff_shares]),3)
     # unique_heterogeneity = sum(diff_unique)/len(lookback_timestamps)
     # counts_heterogeneity = [sum(x)/len for i in diff_counts]
 
-    value = market_shares_heterogeneity
-    assert 0.0 <= value <= 1.0, 'Heterogeneity measurement not in range'
+    value = market_shares_stability
+    assert 0.0 <= value <= 1.0, 'Stability measurement not in range'
     return value
