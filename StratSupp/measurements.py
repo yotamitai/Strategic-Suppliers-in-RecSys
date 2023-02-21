@@ -55,3 +55,6 @@ def heterogeneity(df_rec, df_pay, lookback_timestamps, n_topics=10, verbose=Fals
     value = market_shares_heterogeneity
     assert 0.0 <= value <= 1.0, 'Heterogeneity measurement not in range'
     return value
+
+
+def heterogeneity(df_rec, df_pay):

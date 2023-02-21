@@ -27,10 +27,10 @@ svd_model_params = {
 
 bid_recommendation_rng = np.random.default_rng(RANDOM_STATE)
 
-initial_budget = 100
+initial_budget = 50
 bidding_simulation_params = {
     'payment_per_step': 100,
-    'promotion_factor': 1.0,
+    'promotion_factor': 0.5,
     'num_steps': 100,
 }
 num_steps = bidding_simulation_params['num_steps']
