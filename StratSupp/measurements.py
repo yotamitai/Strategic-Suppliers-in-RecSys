@@ -58,3 +58,4 @@ def heterogeneity(df_rec, df_pay, lookback_timestamps, n_topics=10, verbose=Fals
 
 
 def heterogeneity(df_rec, df_pay):
+    pass
