@@ -4,7 +4,7 @@ import surprise
 from StratSupp.agents import StrategicBiddingAgent, RandomFractionBiddingAgent
 from StratSupp.environments import TopicsDynamic
 from StratSupp.measurements import stability, heterogeneity
-from StratSupp.plotting import plot_df
+from StratSupp.plotting import plot_supplier_over_time
 from StratSupp.simulations import simulate_recommendations_with_bidding
 from StratSupp.suppliers import SuppliersGroup
 
@@ -61,14 +61,16 @@ if __name__ == '__main__':
         # **bidding_simulation_params
     )
 
-    # plot
-    plot_df(payments_df)
-
     # measurements
-    timestamp = range(num_steps-lookback_steps, num_steps)
-    stability_value = stability(recommendation_results_df, payments_df, timestamp)
-    heterogeneity_value = heterogeneity(recommendation_results_df, payments_df, timestamp, verbose=True)
+    timestamps = range(num_steps-lookback_steps, num_steps)
+    stability_value = stability(recommendation_results_df, payments_df, timestamps, verbose=True)
+    heterogeneity_value = heterogeneity(recommendation_results_df, payments_df, num_steps-1)
 
     # printing
     print(f'Stability score: {stability_value}\nHeterogeneity score: {heterogeneity_value}')
     print(f'Measurements from the {lookback_steps} last timestamps')
+
+    # plot
+    plot_supplier_over_time(payments_df, 'remaining_budget')
+    plot_supplier_over_time(payments_df, 'bid')
+    plot_supplier_over_time(payments_df, 'hostility')

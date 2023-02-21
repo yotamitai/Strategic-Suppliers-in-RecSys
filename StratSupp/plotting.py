@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
-def plot_df(df):
-    df.pivot('timestamp', 'supplier', 'remaining_budget').plot.line(
-        title='Remaining budget over time for different suppliers',
+def plot_supplier_over_time(df, subject):
+    df.pivot('timestamp', 'supplier', subject).plot.line(
+        title=f'Supplier {subject} over time ',
         xlabel='Time ($t$)',
-        ylabel='Remaining budget',
+        ylabel=f'{subject}',
         figsize=(12, 6),
         )
-
     plt.show()
+
