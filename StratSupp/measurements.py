@@ -1,6 +1,7 @@
 import numpy as np
 
 from StratSupp.utils import topic_histogram
+from CONFIG import *
 
 
 def heterogeneity(df_rec, df_pay, last_timestamp, n_topics=10):
@@ -8,17 +9,30 @@ def heterogeneity(df_rec, df_pay, last_timestamp, n_topics=10):
     :param last_timestamp: (int) the last timestamp
     :return         value: (Float) between 0-1
     """
+    last_timestamp = bidding_simulation_params["num_steps"]
+    n_topics = topics_params["n_topics"]
+
+
     df_last_timestamp = df_rec[df_rec["timestamp"] == last_timestamp]
     hist = topic_histogram(df_last_timestamp['latent_topic'].values, n_topics)
     market_shares = [round((x / df_last_timestamp.shape[0]), 3) for x in hist]
+
+    no_major = 1
+    for x in market_shares:
+        if x>0.5:
+            no_major=0
+
     non_zero_topics = df_last_timestamp['latent_topic'].nunique()
 
-    # calculate heterogeneity
-    market_shares_heterogeneity = 0 #TODO
+    monopoly_binary = 0
+    if len(non_zero_topics) == 1:
+        monopoly_binary = 0
+    else:
+        monopoly_binary = 1
 
-    value = market_shares_heterogeneity
-    assert 0.0 <= value <= 1.0, 'Heterogeneity measurement not in range'
-    return value
+    monopoly_continuous = len(non_zero_topics) / n_topics
+
+    return no_major, monopoly_binary, monopoly_continuous
 
 
 def stability(df_rec, df_pay, lookback_timestamps, n_topics=10, verbose=False):
@@ -60,6 +74,3 @@ def stability(df_rec, df_pay, lookback_timestamps, n_topics=10, verbose=False):
     assert 0.0 <= value <= 1.0, 'Stability measurement not in range'
     return value
 
-
-def heterogeneity(df_rec, df_pay):
-    pass

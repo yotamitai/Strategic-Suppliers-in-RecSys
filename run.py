@@ -7,40 +7,15 @@ from StratSupp.measurements import stability, heterogeneity
 from StratSupp.plotting import plot_supplier_over_time
 from StratSupp.simulations import simulate_recommendations_with_bidding
 from StratSupp.suppliers import SuppliersGroup
+from CONFIG import *
 
-RANDOM_STATE = 1234
+promotion_factor = 0.5
+topic_change = 0.0
 
-# TopicsDyamic
-topics_params = {
-    'n_users': 100,
-    'n_items': 300,
-    'n_topics': 10,
-    'n_initial_ratings': 2000,
-    'random_state': RANDOM_STATE,
-}
-
-# surprise.SVD
-svd_model_params = {
-    'n_factors': 16,
-    'random_state': RANDOM_STATE,
-}
-
-bid_recommendation_rng = np.random.default_rng(RANDOM_STATE)
-
-initial_budget = 50
-bidding_simulation_params = {
-    'payment_per_step': 100,
-    'promotion_factor': 0.5,
-    'num_steps': 100,
-}
-num_steps = bidding_simulation_params['num_steps']
-lookback_steps = int(0.02 * num_steps)
-
-n_strategic_agents = 10 #topics_params['n_topics']
 
 if __name__ == '__main__':
     # environment
-    env = TopicsDynamic(topic_change=0.0, **topics_params)
+    env = TopicsDynamic(topic_change=topic_change, **topics_params)
     # prediction model
     cf_model = surprise.SVD(**svd_model_params)
     # suppliers
@@ -55,7 +30,7 @@ if __name__ == '__main__':
     recommendation_results_df, payments_df = simulate_recommendations_with_bidding(  # environment
         env=env, cf_model=cf_model, suppliers=suppliers,
         payment_per_step=bidding_simulation_params["payment_per_step"],
-        promotion_factor=bidding_simulation_params["promotion_factor"],
+        promotion_factor=promotion_factor,
         num_steps=bidding_simulation_params["num_steps"]
         # global simulation parameters (lengths, payment per step, promotion)
         # **bidding_simulation_params
