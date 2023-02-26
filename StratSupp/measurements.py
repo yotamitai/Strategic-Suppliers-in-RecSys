@@ -4,27 +4,25 @@ from StratSupp.utils import topic_histogram
 from CONFIG import *
 
 
-def heterogeneity(df_rec, df_pay, last_timestamp, n_topics=10):
-    """
-    :param last_timestamp: (int) the last timestamp
-    :return         value: (Float) between 0-1
-    """
-    last_timestamp = bidding_simulation_params["num_steps"]
+def _shares_in_numbers(df_rec, time_step, return_indices=False):
     n_topics = topics_params["n_topics"]
 
+    df_timestamp = df_rec[df_rec["timestamp"] == time_step]
+    hist = topic_histogram(df_timestamp['latent_topic'].values, n_topics)
+    market_shares = [round((x / df_timestamp.shape[0]), 3) for x in hist]
 
-    df_last_timestamp = df_rec[df_rec["timestamp"] == last_timestamp]
-    hist = topic_histogram(df_last_timestamp['latent_topic'].values, n_topics)
-    market_shares = [round((x / df_last_timestamp.shape[0]), 3) for x in hist]
-
-    no_major = 1
+    major = -1
     for x in market_shares:
-        if x>0.5:
-            no_major=0
+        if x > 0.5:
+            major = x
 
-    non_zero_topics = df_last_timestamp['latent_topic'].nunique()
+    non_zero_topics = df_timestamp['latent_topic'].nunique().tolist()
 
-    monopoly_binary = 0
+    if return_indices:
+        return major, non_zero_topics
+
+    major_binary = min(1, major+1)
+
     if len(non_zero_topics) == 1:
         monopoly_binary = 0
     else:
@@ -32,7 +30,17 @@ def heterogeneity(df_rec, df_pay, last_timestamp, n_topics=10):
 
     monopoly_continuous = len(non_zero_topics) / n_topics
 
-    return no_major, monopoly_binary, monopoly_continuous
+    return major_binary, monopoly_binary, monopoly_continuous
+
+
+def heterogeneity(df_rec, df_pay, last_timestamp, n_topics=10):
+    """
+    :param last_timestamp: (int) the last timestamp
+    :return         value: (Float) between 0-1
+    """
+
+    last_timestamp = bidding_simulation_params["num_steps"]
+    return _shares_in_numbers(df_rec, last_timestamp, return_indices=False)
 
 
 def stability(df_rec, df_pay, lookback_timestamps, n_topics=10, verbose=False):
@@ -73,4 +81,29 @@ def stability(df_rec, df_pay, lookback_timestamps, n_topics=10, verbose=False):
     value = market_shares_stability
     assert 0.0 <= value <= 1.0, 'Stability measurement not in range'
     return value
+
+
+def stability_from_suppliers_view(df_rec):
+    n_topics = topics_params["n_topics"]
+    last_timestamp = bidding_simulation_params["num_steps"]
+
+    majors_change = 0
+    non_zeros_change = 0
+
+    prev_major, prev_non_zero = _shares_in_numbers(df_rec, last_timestamp-lookback_steps, return_indices=True)
+    for time_step in range(last_timestamp-lookback_steps+1, lookback_steps):
+        new_major, new_non_zero = _shares_in_numbers(df_rec, time_step, return_indices=True)
+        new_major_change = int(not new_major == prev_major)
+        new_non_zero_change = len(set(prev_non_zero).symmetric_difference(set(new_non_zero))) / n_topics
+
+        majors_change += new_major_change
+        non_zeros_change += new_non_zero_change
+
+        prev_major, prev_non_zero = new_major, new_non_zero
+
+    majors_change /= (lookback_steps-1)
+    non_zeros_change /= (lookback_steps-1)
+
+    return 1-majors_change, 1-non_zeros_change
+
 
