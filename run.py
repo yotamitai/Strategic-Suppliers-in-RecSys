@@ -9,13 +9,10 @@ from StratSupp.simulations import simulate_recommendations_with_bidding
 from StratSupp.suppliers import SuppliersGroup
 from CONFIG import *
 
-promotion_factor = 0.5
-topic_change = 0.0
 
-
-if __name__ == '__main__':
+def run(promotion, affinity):
     # environment
-    env = TopicsDynamic(topic_change=topic_change, **topics_params)
+    env = TopicsDynamic(topic_change=affinity, **topics_params)
     # prediction model
     cf_model = surprise.SVD(**svd_model_params)
     # suppliers
@@ -30,16 +27,24 @@ if __name__ == '__main__':
     recommendation_results_df, payments_df = simulate_recommendations_with_bidding(  # environment
         env=env, cf_model=cf_model, suppliers=suppliers,
         payment_per_step=bidding_simulation_params["payment_per_step"],
-        promotion_factor=promotion_factor,
+        promotion_factor=promotion,
         num_steps=bidding_simulation_params["num_steps"]
         # global simulation parameters (lengths, payment per step, promotion)
         # **bidding_simulation_params
     )
 
+    return recommendation_results_df, payments_df
+
+
+if __name__ == '__main__':
+    promotion_factor = 0.5
+    affinity_change = 0.0
+
+    recommendation_results_df, payments_df = run(promotion_factor, affinity_change)
+
     # measurements
-    timestamps = range(num_steps-lookback_steps, num_steps)
-    stability_value = stability(recommendation_results_df, payments_df, timestamps, verbose=True)
-    heterogeneity_value = heterogeneity(recommendation_results_df, payments_df, num_steps-1)
+    stability_value = stability(recommendation_results_df, verbose=True)
+    heterogeneity_value = heterogeneity(recommendation_results_df)
 
     # printing
     print(f'Stability score: {stability_value}\nHeterogeneity score: {heterogeneity_value}')
