@@ -10,10 +10,10 @@ if __name__ == '__main__':
     promotion_range = list(np.linspace(0, 5, 11))
     affinity_range = [round(x, 1) for x in np.linspace(-2, 2, 11)]
 
-    load = False
+    load = True
 
     if load:
-        exp_dict = pickle.load(open('100_steps_2023-02-27_17:22:36', "rb"))
+        exp_dict = pickle.load(open('1000_steps_2023-02-28_13:54:25.pkl', "rb"))
 
     else:  # get dataframes
         exp_dict = {"promotion_factor": [], "affinity_change": [], "rec_df": [], "pay_df": []}
@@ -31,14 +31,19 @@ if __name__ == '__main__':
         with open(exp_name + '.pkl', 'wb') as file:
             pickle.dump(exp_dict, file)
 
-
     # measurements
+    significance_bound = 0.95  # TODO define significance bound
     print(f'Measurements from the {lookback_steps} last timestamps')
     for i in range(len(exp_dict['rec_df'])):
         stability_values = stability(exp_dict['rec_df'][i])
-        significance = "" if not [1 for x in stability_values if x > 0.8] else "--## High Value ##--" #TODO define significance bound
+        significances = []
+        for v in stability_values:
+            significances.append("" if v < significance_bound else "--## High Value ##--")
         print(f'Promotion: {exp_dict["promotion_factor"][i]:3.3}, '
               f'Affinity: {exp_dict["affinity_change"][i]:4.3}, '
-              f'Stability: {stability_values}'
-             f'\t\t{significance}')
-
+              f'Stability:\n'
+              f'\t\t\t\t\t\t\t\tMarketShare:      {stability_values[0]:5.3}\t\t{significances[0]}\n'
+              f'\t\t\t\t\t\t\t\tMajoritySupplier: {stability_values[1]:5.3}\t\t{significances[1]}\n'
+              f'\t\t\t\t\t\t\t\tNonZero:          {stability_values[2]:5.3}\t\t{significances[2]}\n'
+              f'\t\t\t\t\t\t\t\tUserTopic:        {stability_values[3]:5.3}\t\t{significances[3]}\n')
+        print(50 * '-')

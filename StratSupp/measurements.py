@@ -125,4 +125,4 @@ def user_stability(df_rec):
 
     n_topic_change_users = sum([1 for v in user_topics.values() if len(v) > 1])
 
-    return n_topic_change_users/len(user_topics)
+    return 1 -(n_topic_change_users/len(user_topics))
