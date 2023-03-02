@@ -13,7 +13,7 @@ if __name__ == '__main__':
     load = True
 
     if load:
-        exp_dict = pickle.load(open('1000_steps_2023-02-28_13:54:25.pkl', "rb"))
+        exp_dict = pickle.load(open('1000_steps_2023-02-28_13-54-25.pkl', "rb"))
 
     else:  # get dataframes
         exp_dict = {"promotion_factor": [], "affinity_change": [], "rec_df": [], "pay_df": []}
@@ -27,18 +27,18 @@ if __name__ == '__main__':
                 exp_dict["pay_df"].append(pay_df)
 
         # save
-        exp_name = datetime.now().strftime("%Y-%m-%d %H:%M:%S").replace(' ', '_')
+        exp_name = datetime.now().strftime("%Y-%m-%d %H:%M:%S").replace(' ', '_').replace(':', '-')
         with open(exp_name + '.pkl', 'wb') as file:
             pickle.dump(exp_dict, file)
 
     # measurements
-    significance_bound = 0.95  # TODO define significance bound
+    significance_bound = 1.0  # TODO define significance bound
     print(f'Measurements from the {lookback_steps} last timestamps')
     for i in range(len(exp_dict['rec_df'])):
         stability_values = stability(exp_dict['rec_df'][i])
         significances = []
         for v in stability_values:
-            significances.append("" if v < significance_bound else "--## High Value ##--")
+            significances.append("--## High Value ##--" if v >= significance_bound else "")
         print(f'Promotion: {exp_dict["promotion_factor"][i]:3.3}, '
               f'Affinity: {exp_dict["affinity_change"][i]:4.3}, '
               f'Stability:\n'
