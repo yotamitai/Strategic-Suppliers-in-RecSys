@@ -7,9 +7,6 @@ from CONFIG import *
 import pickle
 
 if __name__ == '__main__':
-    promotion_range = list(np.linspace(0, 5, 11))
-    affinity_range = [round(x, 1) for x in np.linspace(-2, 2, 11)]
-
     load = True
 
     if load:
@@ -32,13 +29,12 @@ if __name__ == '__main__':
             pickle.dump(exp_dict, file)
 
     # measurements
-    significance_bound = 1.0  # TODO define significance bound
     print(f'Measurements from the {lookback_steps} last timestamps')
     for i in range(len(exp_dict['rec_df'])):
         stability_values = stability(exp_dict['rec_df'][i])
         significances = []
         for v in stability_values:
-            significances.append("--## High Value ##--" if v >= significance_bound else "")
+            significances.append("--## High Value ##--" if v >= significance_stability_bound else "")
         print(f'Promotion: {exp_dict["promotion_factor"][i]:3.3}, '
               f'Affinity: {exp_dict["affinity_change"][i]:4.3}, '
               f'Stability:\n'

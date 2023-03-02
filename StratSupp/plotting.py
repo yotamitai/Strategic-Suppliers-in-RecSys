@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import seaborn
+from CONFIG import *
 
 
 def plot_supplier_over_time(df, subject):
@@ -13,5 +14,8 @@ def plot_supplier_over_time(df, subject):
 
 
 def heatmap(values, measurement_name):
-
-    seaborn.heatmap(values)
+    plt.ylabel('promotion')
+    plt.xlabel('affinity change')
+    _ = plt.title(measurement_name)
+    seaborn.heatmap(values, yticklabels=promotion_range, xticklabels=affinity_range)
+    plt.show()
