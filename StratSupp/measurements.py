@@ -128,9 +128,19 @@ def user_stability(df_rec):
     return 1 -(n_topic_change_users/len(user_topics))
 
 
-def overall_trinary_monopoly(df_rec, stability_type):
+def overall_trinary_monopoly(df_rec, stability_type=0, heterogeneity_type=0):
+    # TODO: decide which stability
     if stability(df_rec)[stability_type]<significance_stability_bound:
         return -1
-    if heterogeneity(df_rec)<significance_heterogeneity_bound:
+    # TODO: decide which heterogeneity
+    if heterogeneity(df_rec)[heterogeneity_type]>significance_heterogeneity_bound:
         return 0
-    return -1
+    return 1
+
+names_dict = {
+    overall_trinary_monopoly: "Market State: Stability And Heterogeneity",
+    market_share_stability: "Market Shares Stability",
+    user_stability: "User Stability",
+    supplier_stability: "Suppliers Stability",
+    heterogeneity: "Heterogeneity"
+}
