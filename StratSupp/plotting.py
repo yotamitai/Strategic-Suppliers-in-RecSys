@@ -14,17 +14,18 @@ def plot_supplier_over_time(df, subject):
 
 
 def _heatmap(values, measurement_name):
+    _ = plt.title(measurement_name)
+
+    seaborn.heatmap(values, yticklabels=promotion_range, xticklabels=affinity_range, annot=True)
     plt.ylabel('promotion')
     plt.xlabel('affinity change')
-    _ = plt.title(measurement_name)
-    seaborn.heatmap(values, yticklabels=promotion_range, xticklabels=affinity_range)
     plt.show()
 
 
 def heatmap(values, measurement_name):
-    if values is tuple:
-        for i in range(len(values)):
-            new_measurement_name = measurement_name+" "+str(i)
-            _heatmap(values, new_measurement_name)
+    if isinstance(values[0][0], tuple):
+        for i in range(len(values[0][0])):
+            new_values = [[item[i] for item in row] for row in values]
+            _heatmap(new_values, measurement_name[i])
     else:
         _heatmap(values, measurement_name)
