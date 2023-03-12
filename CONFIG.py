@@ -1,6 +1,6 @@
 import numpy as np
 
-RANDOM_STATE = 1234
+RANDOM_STATE = 1226
 topics_params = {
     'n_users': 100,
     'n_items': 300,
@@ -30,5 +30,7 @@ n_strategic_agents = 10 #topics_params['n_topics']
 promotion_range = list(np.linspace(0, 5, 11))
 affinity_range = [round(x, 1) for x in np.linspace(-2, 2, 11)]
 
-significance_stability_bound = 0.99  # TODO define significance stability bound
+significance_stability_bound = 0.8  # TODO define significance stability bound
 significance_heterogeneity_bound = 0.15  # TODO define significance heterogeneity bound
+
+stability_percentage_bound = 0.6

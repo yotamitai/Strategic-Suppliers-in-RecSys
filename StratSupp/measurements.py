@@ -23,7 +23,7 @@ def _shares_in_numbers(df_rec, time_step, return_indices=False):
     if return_indices:
         return major, non_zero_topics
 
-    major_binary = min(1, major + 1)
+    major_binary = 1-min(1, major + 1)
 
     if len(non_zero_topics) == 1:
         monopoly_binary = 0
@@ -31,6 +31,9 @@ def _shares_in_numbers(df_rec, time_step, return_indices=False):
         monopoly_binary = 1
 
     monopoly_continuous = (len(non_zero_topics)-1) / (n_topics-1)
+
+    # TODO: debug
+    print(major_binary, monopoly_binary)
 
     return major_binary, monopoly_binary, monopoly_continuous
 
@@ -146,6 +149,6 @@ names_dict = {
     market_share_stability: "Market Shares Stability",
     user_stability: "User Stability",
     supplier_stability: "Suppliers Stability",
-    heterogeneity: ["Heterogeneity: " + subtitle for subtitle in ["major binary", "monopoly_binary", "monopoly_continuous"]],
-    stability: ["Stability: " + subtitle for subtitle in ["market shares", "majority supplier", "non zero suppliers", "users"]]
+    stability: ["Stability: " + subtitle for subtitle in ["market shares", "majority supplier", "non zero suppliers", "users"]],
+    heterogeneity: ["Heterogeneity: " + subtitle for subtitle in ["major binary", "monopoly binary", "monopoly continuous"]],
 }

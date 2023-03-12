@@ -4,20 +4,17 @@ from StratSupp.measurements import stability, heterogeneity, overall_trinary_mon
 from run import run
 from CONFIG import *
 import pickle
-from StratSupp.plotting import heatmap
+from StratSupp.plotting import heatmap, final_heatmap
 
 
 f_measures = [overall_trinary_monopoly]
 load = True
 
-
-
-if __name__ == '__main__':
-
     n_measures = len(f_measures)
 
+    exp_dicts = []
     if load:
-        exp_dict = pickle.load(open('1000_steps_2023-02-28_13-54-25.pkl', "rb"))
+        exp_dicts.append(pickle.load(open('1000_steps_2023-02-28_13-54-25.pkl', "rb")))
 
     else:  # get dataframes
         exp_dict = {"promotion_factor": [], "affinity_change": [], "rec_df": [], "pay_df": []}
@@ -37,18 +34,34 @@ if __name__ == '__main__':
             pickle.dump(exp_dict, file)
 
     # measurements
-    for f_measure in f_measures:
+    values_matrices_list = []
+    for exp_dict in exp_dicts:
         values = [[0] * len(affinity_range) for i in promotion_range]
         for i in range(len(exp_dict['rec_df'])):
             df = exp_dict['rec_df'][i]
             p_index = promotion_range.index(exp_dict["promotion_factor"][i])
             a_index = affinity_range.index(exp_dict["affinity_change"][i])
 
-            values[p_index][a_index] = f_measure(df)
+            values[p_index][a_index] = overall_trinary_monopoly(df)
+        values_matrices_list.append(values)
 
-        heatmap(values, names_dict[f_measure])
+    final_heatmap(values_matrices_list)
 
 
+    # measurements
+    # for f_measure in f_measures:
+    #     values_matrices_list = []
+    #     for exp_dict in exp_dicts:
+    #         values = [[0] * len(affinity_range) for i in promotion_range]
+    #         for i in range(len(exp_dict['rec_df'])):
+    #             df = exp_dict['rec_df'][i]
+    #             p_index = promotion_range.index(exp_dict["promotion_factor"][i])
+    #             a_index = affinity_range.index(exp_dict["affinity_change"][i])
+    #
+    #             values[p_index][a_index] = f_measure(df)
+    #         values_matrices_list.append(values)
+    #
+    #     heatmap(values, names_dict[f_measure])
 
 
 
