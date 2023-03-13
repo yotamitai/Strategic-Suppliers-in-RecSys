@@ -8,7 +8,11 @@ from StratSupp.plotting import heatmap, final_heatmap
 
 
 f_measures = [overall_trinary_monopoly]
-load = True
+load = False
+
+
+
+if __name__ == '__main__':
 
     n_measures = len(f_measures)
 

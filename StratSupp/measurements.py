@@ -131,7 +131,7 @@ def user_stability(df_rec):
     return 1 -(n_topic_change_users/len(user_topics))
 
 
-def overall_trinary_monopoly(df_rec, stability_type=1, heterogeneity_type=2):
+def overall_trinary_monopoly(df_rec, stability_type=3, heterogeneity_type=1):
     # -1: no stability
     #  0: stability and heterogeneity
     # +1: stability and monopoly
