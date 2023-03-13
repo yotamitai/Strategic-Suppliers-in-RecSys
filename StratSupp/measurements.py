@@ -33,7 +33,7 @@ def _shares_in_numbers(df_rec, time_step, return_indices=False):
     monopoly_continuous = (len(non_zero_topics)-1) / (n_topics-1)
 
     # TODO: debug
-    print(major_binary, monopoly_binary)
+    # print(major_binary, monopoly_binary)
 
     return major_binary, monopoly_binary, monopoly_continuous
 

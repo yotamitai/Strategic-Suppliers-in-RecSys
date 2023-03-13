@@ -41,9 +41,9 @@ def summarize_values(list_of_values):
 def final_heatmap(list_of_matrices):
     summary = []
 
-    for line_idx in range(list_of_matrices[0]):
+    for line_idx in range(len(list_of_matrices[0])):
         new_line = []
-        for value_idx in list_of_matrices[0][0]:
+        for value_idx in range(len(list_of_matrices[0][0])):
             values_list = [matrix[line_idx][value_idx] for matrix in list_of_matrices]
             new_value = summarize_values(values_list)
             new_line.append(new_value)

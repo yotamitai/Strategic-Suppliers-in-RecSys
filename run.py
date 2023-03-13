@@ -43,7 +43,7 @@ if __name__ == '__main__':
     recommendation_results_df, payments_df = run(promotion_factor, affinity_change)
 
     # measurements
-    stability_value = stability(recommendation_results_df, verbose=True)
+    stability_value = stability(recommendation_results_df)
     heterogeneity_value = heterogeneity(recommendation_results_df)
 
     # printing
