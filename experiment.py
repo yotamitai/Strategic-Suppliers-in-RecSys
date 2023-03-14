@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from StratSupp.measurements import stability, heterogeneity, overall_trinary_monopoly, names_dict
+from StratSupp.measurements import stability, heterogeneity, overall_trinary_monopoly_by_percentage, names_dict
 from run import run
 from CONFIG import *
 import pickle
@@ -46,10 +46,10 @@ for exp_dict in exp_dicts:
         p_index = promotion_range.index(exp_dict["promotion_factor"][i])
         a_index = affinity_range.index(exp_dict["affinity_change"][i])
 
-        values[p_index][a_index] = overall_trinary_monopoly(df)
+        values[p_index][a_index] = overall_trinary_monopoly_by_percentage(df, per)
     values_matrices_list.append(values)
 
-final_heatmap(values_matrices_list)
+final_heatmap(values_matrices_list, per)
 
 
 # measurements

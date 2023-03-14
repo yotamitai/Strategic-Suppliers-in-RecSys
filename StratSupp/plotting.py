@@ -38,7 +38,7 @@ def summarize_values(list_of_values):
     return sum(non_negatives) / len(non_negatives)
 
 
-def final_heatmap(list_of_matrices):
+def final_heatmap(list_of_matrices, per):
     summary = []
 
     for line_idx in range(len(list_of_matrices[0])):
@@ -49,4 +49,4 @@ def final_heatmap(list_of_matrices):
             new_line.append(new_value)
         summary.append(new_line)
 
-    _heatmap(summary, "Market State: Stability And Heterogeneity")
+    _heatmap(summary, f"Market State: Stability And Heterogeneity.\tpercentage = {per*100}")

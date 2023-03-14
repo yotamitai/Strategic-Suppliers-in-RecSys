@@ -32,9 +32,6 @@ def _shares_in_numbers(df_rec, time_step, return_indices=False):
 
     monopoly_continuous = (len(non_zero_topics)-1) / (n_topics-1)
 
-    # TODO: debug
-    # print(major_binary, monopoly_binary)
-
     return major_binary, monopoly_binary, monopoly_continuous
 
 
@@ -136,11 +133,68 @@ def overall_trinary_monopoly(df_rec, stability_type=3, heterogeneity_type=1):
     #  0: stability and heterogeneity
     # +1: stability and monopoly
 
-    # TODO: decide which stability
     if stability(df_rec)[stability_type]<significance_stability_bound:
         return -1
-    # TODO: decide which heterogeneity
     if heterogeneity(df_rec)[heterogeneity_type]>significance_heterogeneity_bound:
+        return 0
+    return 1
+
+"""
+By Percentage
+"""
+
+
+def _shares_in_numbers_by_percentage(df_rec, time_step, percentage):
+    n_topics = topics_params["n_topics"]
+
+    df_timestamp = df_rec[df_rec["timestamp"] == time_step]
+    hist = topic_histogram(df_timestamp['latent_topic'].values, n_topics)
+    market_shares = [round((x / df_timestamp.shape[0]), 3) for x in hist]
+
+    major = -1
+    for i, x in enumerate(market_shares):
+        if x >= percentage:
+            major = i
+
+    major_binary = 1-min(1, major + 1)
+
+    return major_binary
+
+
+def heterogeneity_by_percentage(df_rec, percentage):
+    last_timestamp = bidding_simulation_params["num_steps"]
+    return _shares_in_numbers_by_percentage(df_rec, last_timestamp, percentage)
+
+
+def supplier_stability_by_percentage(df_rec, percentage):
+    n_topics = topics_params["n_topics"]
+    last_timestamp = bidding_simulation_params["num_steps"]
+
+    majors_change = 0
+
+    prev_major = _shares_in_numbers_by_percentage(df_rec, last_timestamp - lookback_steps, percentage)
+
+    for time_step in range(last_timestamp - lookback_steps + 1, last_timestamp):
+        new_major = _shares_in_numbers_by_percentage(df_rec, time_step, percentage)
+        new_major_change = 0 if (new_major == prev_major or new_major==-1) else 1
+
+        majors_change += new_major_change
+
+        prev_major = new_major
+
+    majors_change /= (lookback_steps - 1)
+
+    return 1 - majors_change
+
+
+def overall_trinary_monopoly_by_percentage(df_rec, percentage):
+    # -1: no stability
+    #  0: stability and heterogeneity
+    # +1: stability and monopoly
+
+    if supplier_stability_by_percentage(df_rec, percentage)<significance_stability_bound:
+        return -1
+    if heterogeneity_by_percentage(df_rec, percentage)>significance_heterogeneity_bound:
         return 0
     return 1
 
