@@ -2,11 +2,11 @@ import pickle
 from os import listdir
 from os.path import join
 from CONFIG import *
-from StratSupp.measurements import overall_trinary_monopoly
+from StratSupp.measurements import overall_trinary_monopoly_by_percentage
 from StratSupp.plotting import final_heatmap
 
 
-def summarize_experiments(path):
+def summarize_experiments(path, per):
     exp_dicts = []
     for file in listdir(path):
         exp_dicts.append(pickle.load(open(join(path,file), "rb")))
@@ -19,11 +19,11 @@ def summarize_experiments(path):
             p_index = promotion_range.index(exp_dict["promotion_factor"][i])
             a_index = affinity_range.index(exp_dict["affinity_change"][i])
 
-            values[p_index][a_index] = overall_trinary_monopoly(df)
+            values[p_index][a_index] = overall_trinary_monopoly_by_percentage(df, per)
         values_matrices_list.append(values)
 
-    final_heatmap(values_matrices_list)
+    final_heatmap(values_matrices_list, per)
 
 
 if __name__ == '__main__':
-    summarize_experiments('experiments')
+    summarize_experiments('experiments', 0.75)
